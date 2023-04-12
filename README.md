@@ -1,1 +1,1 @@
-# lovelive_ss
+# lovelive_kashi
