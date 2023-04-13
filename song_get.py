@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 
 # アーティストページのURL
-artist_url = f"https://www.uta-net.com/artist/18955/"
+artist_url = f"https://www.uta-net.com/artist/10739/"
 
 # ページの取得
 response = requests.get(artist_url)
@@ -21,7 +21,8 @@ song_links = [x for x in temtemp if "TVサイズ" not in x]
 print(song_links)
 
 # ファイル名
-filename = "Aqours_songlist.txt"
+artist_name = "μ's"
+filename = f"./songlist/{artist_name}_songlist.txt"
 
 # ファイルに書き込み
 with open(filename, "w") as f:

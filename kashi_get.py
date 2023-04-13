@@ -1,29 +1,36 @@
 import requests
 from bs4 import BeautifulSoup
 
-artist = "Aqours"
-song_name = ""
 
-search_url = f"https://www.uta-net.com/search/?Aselect=1&Keyword={artist}+{song_name}&Bselect=3&x=0&y=0"
-response = requests.get(search_url)
+def get_lyrics(song_title):
+    # 曲名で検索ページの HTML 取得
+    base_url = f"https://www.uta-net.com/"
+    search_url = base_url + f"search/?Keyword={song_title}&Aselect=2&Bselect=3"
+    search_res = requests.get(search_url)
+    search_soup = BeautifulSoup(search_res.text, "html.parser")
 
-soup = BeautifulSoup(response.content, "html.parser")
+    # 検索結果のうち最初の曲のページ URL 取得
+    song_url = base_url + search_soup.find("a", class_="py-2 py-lg-0")["href"]
 
-# 検索結果の最初のページの最初の曲を取得
-song_link = soup.select_one(
-    "div#ichiran > div#kashi_search_list > table > tbody > tr > td.side.td1 > a")
+    # 曲ページの HTML 取得
+    song_res = requests.get(song_url)
+    song_soup = BeautifulSoup(song_res.text, "html.parser")
 
-# 曲の詳細ページのURLを取得
-song_url = song_link["href"]
+    # 歌詞部分のみ取得
+    lyric_div = song_soup.find("div", {"id": "kashi_area"})
+    lyrics = [s for s in lyric_div.stripped_strings]
+    lyrics = "\n".join(lyrics)
 
-# 曲の詳細ページにアクセスしてHTMLを取得
-response = requests.get(song_url)
-soup = BeautifulSoup(response.content, "html.parser")
+    # 歌詞をファイルに保存
+    song_title = song_title.replace("?", "？")
+    with open(f"./songlist/{artist_name}/{song_title}.txt", "w", encoding="utf-8") as f:
+        f.write(lyrics)
 
-# 歌詞を含むHTML要素を取得
-lyrics_div = soup.select_one("div#kashi_area")
 
-# 歌詞を抽出
-lyrics = lyrics_div.text.strip()
-
-print(lyrics)
+if __name__ == '__main__':
+    # μ's？Aqours？
+    artist_name = "μ's"
+    with open(f"./songlist/{artist_name}_songlist.txt", 'r') as file:
+        for line in file:
+            print(line.strip())
+            get_lyrics(line.strip())
