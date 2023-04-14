@@ -9,8 +9,11 @@ def get_lyrics(song_title):
     search_res = requests.get(search_url)
     search_soup = BeautifulSoup(search_res.text, "html.parser")
 
-    # 検索結果のうち最初の曲のページ URL 取得
-    song_url = base_url + search_soup.find("a", class_="py-2 py-lg-0")["href"]
+    temp = search_soup.select(".py-2.py-lg-0")
+    for item in temp:
+        target = item.contents[0].text.strip()
+        if target == song_title:
+            song_url = base_url + item.get("href")
 
     # 曲ページの HTML 取得
     song_res = requests.get(song_url)
@@ -29,7 +32,7 @@ def get_lyrics(song_title):
 
 if __name__ == '__main__':
     # μ's？Aqours？
-    artist_name = "μ's"
+    artist_name = "Aqours"
     with open(f"./songlist/{artist_name}_songlist.txt", 'r') as file:
         for line in file:
             print(line.strip())
