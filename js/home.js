@@ -2,18 +2,15 @@ const fs = require('fs');
 const path = require('path');
 
 const directoryPath = '../songlist/Aqours';
-const files = [];
 
-fs.readdir(directoryPath, function (err, fileNames) {
+fs.readdir(directoryPath, function (err, files) {
     if (err) {
-        console.log('Unable to read directory: ' + err);
-        return;
+        console.log('Error getting directory information.');
+    } else {
+        let filePaths = [];
+        files.forEach(function (file) {
+            filePaths.push(path.join(directoryPath, file));
+        });
+        console.log(filePaths);
     }
-
-    fileNames.forEach(function (fileName) {
-        const filePath = path.join(directoryPath, fileName);
-        files.push(filePath);
-    });
-
-    console.log(files);
 });
